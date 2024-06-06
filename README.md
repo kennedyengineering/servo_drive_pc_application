@@ -38,6 +38,11 @@ usbipd wsl list
 usbipd wsl detach --busid <BUSID (EX: 3-1)>
 ```
 
+In some sitations when `usbipd bind --force` has been used (which is sometimes the default) an extra step is required:
+```
+usbipd unbind --busid <BUSID (EX: 3-1)>
+```
+
 ### Reset Serial Device
 Once attached to WSL press the reset switch.
 
