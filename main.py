@@ -44,8 +44,6 @@ def readSerial():
         if len(data) == rx_struct_size:
             unpacked_data = struct.unpack(rx_struct_format, data)
 
-            print(unpacked_data)
-
             ymeas.append(unpacked_data[0])
             yset.append(unpacked_data[1])
             xs.append(i)
@@ -57,14 +55,16 @@ rx_thread.daemon = True
 rx_thread.start()
 
 # Plot
-fig = plt.figure()
-fig.subplots_adjust(bottom=0.2)
+fig = plt.figure("Servo Drive Application")
+fig.subplots_adjust(bottom=0.25)
 ax1 = fig.add_subplot(1,1,1)
 
 def animate(i, xs, ymeas, yset):
     ax1.clear()
     ax1.plot(xs, ymeas, label="measured")
     ax1.plot(xs, yset, "-.", label="setpoint")
+    ax1.set_xlabel("Timestep")
+    ax1.set_ylabel("Position")
 
 ani = animation.FuncAnimation(
     fig=fig, func=animate, interval=0.25, fargs=(xs, ymeas, yset), save_count=10
