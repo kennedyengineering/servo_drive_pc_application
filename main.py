@@ -13,24 +13,23 @@ from matplotlib.widgets import TextBox
 from collections import deque
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--port', type=str, default='/dev/ttyACM0')
-parser.add_argument('--baud_rate', type=int, default=115200)
+parser.add_argument("--port", type=str, default="/dev/ttyACM0")
+parser.add_argument("--baud_rate", type=int, default=115200)
 args = parser.parse_args()
 
-ser = serial.Serial(args.port,
-                    args.baud_rate,
-                    timeout=0.05)
+ser = serial.Serial(args.port, args.baud_rate, timeout=0.05)
 
-rx_struct_format = 'ii'
+rx_struct_format = "ii"
 rx_struct_size = struct.calcsize(rx_struct_format)
 
-tx_struct_format = 'i'
+tx_struct_format = "i"
 tx_struct_size = struct.calcsize(tx_struct_format)
 
 plot_len = 1000
 xs = deque(maxlen=plot_len)
 yset = deque(maxlen=plot_len)
 ymeas = deque(maxlen=plot_len)
+
 
 # Receive
 def readSerial():
@@ -48,7 +47,8 @@ def readSerial():
             yset.append(unpacked_data[1])
             xs.append(i)
 
-            i+=1
+            i += 1
+
 
 rx_thread = threading.Thread(target=readSerial)
 rx_thread.daemon = True
@@ -57,7 +57,8 @@ rx_thread.start()
 # Plot
 fig = plt.figure("Servo Drive Application")
 fig.subplots_adjust(bottom=0.25)
-ax1 = fig.add_subplot(1,1,1)
+ax1 = fig.add_subplot(1, 1, 1)
+
 
 def animate(i, xs, ymeas, yset):
     ax1.clear()
@@ -66,9 +67,11 @@ def animate(i, xs, ymeas, yset):
     ax1.set_xlabel("Timestep")
     ax1.set_ylabel("Position")
 
+
 ani = animation.FuncAnimation(
     fig=fig, func=animate, interval=0.25, fargs=(xs, ymeas, yset), save_count=10
 )
+
 
 def submit(text):
     global ser
@@ -76,6 +79,7 @@ def submit(text):
     data = (int(text),)
     packed_data = struct.pack(tx_struct_format, *data)
     ser.write(packed_data)
+
 
 text_box_ax = fig.add_axes([0.1, 0.05, 0.8, 0.075])
 text_box = TextBox(text_box_ax, "Setpoint", textalignment="center")
