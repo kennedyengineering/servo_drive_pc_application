@@ -12,7 +12,6 @@ args = parser.parse_args()
 
 ser = serial.Serial(args.port,
                     args.baud_rate,
-                    xonxoff=True,
                     timeout=1)
 
 rx_struct_format = 'ii'

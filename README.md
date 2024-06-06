@@ -24,7 +24,7 @@ command="service udev start"
 
 Exit and restart WSL.
 
-### Attach Serial Device (Repeat when device is reset)
+### Attach Serial Device
 In PowerShell (Admin):
 ```
 usbipd wsl list
@@ -37,6 +37,9 @@ In PowerShell (Admin):
 usbipd wsl list
 usbipd wsl detach --busid <BUSID (EX: 3-1)>
 ```
+
+### Reset Serial Device
+Once attached to WSL press the reset switch.
 
 ## Useage
 ```
