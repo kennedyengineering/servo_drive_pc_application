@@ -41,6 +41,8 @@ usbipd wsl detach --busid <BUSID (EX: 3-1)>
 ### Reset Serial Device
 Once attached to WSL press the reset switch.
 
+Serial write does not work until the STM32 is reset, reading still works however.
+
 ## Useage
 ```
 python3 main.py -h
