@@ -31,6 +31,13 @@ usbipd wsl list
 usbipd wsl attach --busid <BUSID (EX: 3-1)>
 ```
 
+### Detach Serial Device (if still connected to WSL)
+In PowerShell (Admin):
+```
+usbipd wsl list
+usbipd wsl detach --busid <BUSID (EX: 3-1)>
+```
+
 ## Useage
 ```
 python3 main.py -h
