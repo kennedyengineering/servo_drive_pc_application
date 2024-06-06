@@ -8,6 +8,8 @@ import threading
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.widgets import TextBox
+
 from collections import deque
 
 parser = argparse.ArgumentParser()
@@ -30,14 +32,9 @@ xs = deque(maxlen=plot_len)
 yset = deque(maxlen=plot_len)
 ymeas = deque(maxlen=plot_len)
 
-# Transmit
-data = (999,)
-packed_data = struct.pack(tx_struct_format, *data)
-ser.write(packed_data)
-
 # Receive
 def readSerial():
-    global ymeas, yset, xs
+    global ymeas, yset, xs, ser
 
     i = 0
 
@@ -46,6 +43,8 @@ def readSerial():
 
         if len(data) == rx_struct_size:
             unpacked_data = struct.unpack(rx_struct_format, data)
+
+            print(unpacked_data)
 
             ymeas.append(unpacked_data[0])
             yset.append(unpacked_data[1])
@@ -59,6 +58,7 @@ rx_thread.start()
 
 # Plot
 fig = plt.figure()
+fig.subplots_adjust(bottom=0.2)
 ax1 = fig.add_subplot(1,1,1)
 
 def animate(i, xs, ymeas, yset):
@@ -67,8 +67,20 @@ def animate(i, xs, ymeas, yset):
     ax1.plot(xs, yset, "-.", label="setpoint")
 
 ani = animation.FuncAnimation(
-    fig=fig, func=animate, interval=0.5, fargs=(xs, ymeas, yset), save_count=10
+    fig=fig, func=animate, interval=0.25, fargs=(xs, ymeas, yset), save_count=10
 )
+
+def submit(text):
+    global ser
+
+    data = (int(text),)
+    packed_data = struct.pack(tx_struct_format, *data)
+    ser.write(packed_data)
+
+text_box_ax = fig.add_axes([0.1, 0.05, 0.8, 0.075])
+text_box = TextBox(text_box_ax, "Setpoint", textalignment="center")
+text_box.on_submit(submit)
+
 plt.show()
 
 # Exit
