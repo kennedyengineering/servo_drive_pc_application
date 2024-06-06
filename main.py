@@ -12,7 +12,7 @@ args = parser.parse_args()
 
 ser = serial.Serial(args.port,
                     args.baud_rate,
-                    timeout=1)
+                    timeout=0.05)
 
 rx_struct_format = 'ii'
 rx_struct_size = struct.calcsize(rx_struct_format)
