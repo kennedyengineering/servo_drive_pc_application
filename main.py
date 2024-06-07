@@ -51,18 +51,10 @@ def readSerial():
             break
 
     while True:
-        t1 = time.time()
-        datum = ser.read()
-        t_d = time.time() - t1
-
-        # print(t_d, datum)
-
-        data.extend(datum)
+        data.extend(ser.read())
 
         if len(data) == rx_struct_size:
             unpacked_data = struct.unpack(rx_struct_format, data)
-
-            # print(unpacked_data)
 
             ymeas.append(unpacked_data[0])
             yset.append(unpacked_data[1])
@@ -72,9 +64,6 @@ def readSerial():
             i += 1
 
             data = bytearray()
-
-            # break
-
 
 rx_thread = threading.Thread(target=readSerial)
 rx_thread.daemon = True
