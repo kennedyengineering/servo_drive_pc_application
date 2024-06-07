@@ -50,6 +50,7 @@ def readSerial():
             data.extend(datum)
             break
 
+    # Read data
     while True:
         data.extend(ser.read())
 
