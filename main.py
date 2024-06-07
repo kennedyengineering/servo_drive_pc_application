@@ -5,6 +5,7 @@ import serial
 import struct
 import argparse
 import threading
+import time
 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -17,7 +18,7 @@ parser.add_argument("--port", type=str, default="/dev/ttyACM0")
 parser.add_argument("--baud_rate", type=int, default=115200)
 args = parser.parse_args()
 
-ser = serial.Serial(args.port, args.baud_rate, timeout=0.002)
+ser = serial.Serial(args.port, args.baud_rate)
 
 rx_struct_format = "iif"
 rx_struct_size = struct.calcsize(rx_struct_format)
@@ -37,11 +38,31 @@ def readSerial():
 
     i = 0
 
+    data = bytearray()
+
+    # Sync with MCU
     while True:
-        data = ser.read(rx_struct_size)
+        t1 = time.time()
+        datum = ser.read()
+        t_d = time.time() - t1
+
+        if t_d > 0.005:
+            data.extend(datum)
+            break
+
+    while True:
+        t1 = time.time()
+        datum = ser.read()
+        t_d = time.time() - t1
+
+        # print(t_d, datum)
+
+        data.extend(datum)
 
         if len(data) == rx_struct_size:
             unpacked_data = struct.unpack(rx_struct_format, data)
+
+            # print(unpacked_data)
 
             ymeas.append(unpacked_data[0])
             yset.append(unpacked_data[1])
@@ -49,6 +70,10 @@ def readSerial():
             xs.append(i)
 
             i += 1
+
+            data = bytearray()
+
+            # break
 
 
 rx_thread = threading.Thread(target=readSerial)
