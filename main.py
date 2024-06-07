@@ -32,6 +32,7 @@ yset = deque(maxlen=plot_len)
 ymeas = deque(maxlen=plot_len)
 us = deque(maxlen=plot_len)
 
+
 # Receive
 def readSerial():
     global ymeas, yset, xs, ser
@@ -66,6 +67,7 @@ def readSerial():
 
             data = bytearray()
 
+
 rx_thread = threading.Thread(target=readSerial)
 rx_thread.daemon = True
 rx_thread.start()
@@ -88,6 +90,7 @@ def animate(i, xs, ymeas, yset):
     ax2.plot(xs, us, label="dutycycle")
     ax2.set_xlabel("Timestep")
     ax2.set_ylabel("Dutycycle")
+
 
 ani = animation.FuncAnimation(
     fig=fig, func=animate, interval=0.25, fargs=(xs, ymeas, yset), save_count=10
