@@ -48,6 +48,8 @@ Once attached to WSL press the reset switch.
 
 Serial write does not work until the STM32 is reset, reading still works however.
 
+Resetting the STM32 while the application is running will break the sync mechanism.
+
 ## Useage
 ```
 python3 main.py -h
