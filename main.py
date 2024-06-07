@@ -17,9 +17,9 @@ parser.add_argument("--port", type=str, default="/dev/ttyACM0")
 parser.add_argument("--baud_rate", type=int, default=115200)
 args = parser.parse_args()
 
-ser = serial.Serial(args.port, args.baud_rate, timeout=0.05)
+ser = serial.Serial(args.port, args.baud_rate, timeout=0.002)
 
-rx_struct_format = "ii"
+rx_struct_format = "iif"
 rx_struct_size = struct.calcsize(rx_struct_format)
 
 tx_struct_format = "i"
@@ -29,7 +29,7 @@ plot_len = 1000
 xs = deque(maxlen=plot_len)
 yset = deque(maxlen=plot_len)
 ymeas = deque(maxlen=plot_len)
-
+us = deque(maxlen=plot_len)
 
 # Receive
 def readSerial():
@@ -45,6 +45,7 @@ def readSerial():
 
             ymeas.append(unpacked_data[0])
             yset.append(unpacked_data[1])
+            us.append(unpacked_data[2])
             xs.append(i)
 
             i += 1
@@ -57,7 +58,8 @@ rx_thread.start()
 # Plot
 fig = plt.figure("Servo Drive Application")
 fig.subplots_adjust(bottom=0.25)
-ax1 = fig.add_subplot(1, 1, 1)
+ax1 = fig.add_subplot(1, 2, 1)
+ax2 = fig.add_subplot(1, 2, 2)
 
 
 def animate(i, xs, ymeas, yset):
@@ -67,6 +69,10 @@ def animate(i, xs, ymeas, yset):
     ax1.set_xlabel("Timestep")
     ax1.set_ylabel("Position")
 
+    ax2.clear()
+    ax2.plot(xs, us, label="dutycycle")
+    ax2.set_xlabel("Timestep")
+    ax2.set_ylabel("Dutycycle")
 
 ani = animation.FuncAnimation(
     fig=fig, func=animate, interval=0.25, fargs=(xs, ymeas, yset), save_count=10
