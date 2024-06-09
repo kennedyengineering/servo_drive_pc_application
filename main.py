@@ -47,7 +47,7 @@ def readSerial():
         datum = ser.read()
         t_d = time.time() - t1
 
-        if t_d > 0.005:
+        if t_d > 0.005:             # MCU USART Tx burst occurs every 10ms
             data.extend(datum)
             break
 
